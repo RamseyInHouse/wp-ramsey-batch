@@ -3,7 +3,7 @@
 Plugin Name:  Ramsey Batch
 Plugin URI:   https://www.daveramsey.com
 Description:  Provides a framework and UI for running batch jobs inside of WordPress.
-Version:      1.0.0
+Version:      1.0.1
 Author:       Philip Downer <philip.downer@daveramsey.com>
 Author URI:   https://philipdowner.com
 License:      GPLv3
