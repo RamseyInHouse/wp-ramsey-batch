@@ -1,6 +1,7 @@
 jQuery( document ).ready( ( $ ) => {
 	const ramseyBatch = {};
 	ramseyBatch.items = [];
+	ramseyBatch.batchName;
 	ramseyBatch.totalItems = ramseyBatch.items.length;
 	ramseyBatch.currentItem = 0;
 	ramseyBatch.itemsComplete = 0;
@@ -61,18 +62,23 @@ jQuery( document ).ready( ( $ ) => {
 				method: 'POST',
 				data: {
 					action: 'ramsey-batch-item',
-					item
+					item,
+					batchName: ramseyBatch.batchName
 				},
 				success( response ) {
 					if ( ! response.success ) {
-						console.log( response.data.reason, response );
+						console.error( response.data.reason, response );
 
 						return reject();
 					}
 
 					ramseyBatch.itemsComplete++;
 
-					console.log( response.data.reason, response );
+					if ( 'warn' == response.data.type ) {
+						console.warn( response.data.reason, response );
+					} else {
+						console.log( response.data.reason, response );
+					}
 
 					return resolve();
 				}
@@ -95,8 +101,8 @@ jQuery( document ).ready( ( $ ) => {
 	function startBatch( trigger ) {
 		return new Promise( ( resolve, reject ) => {
 			currentButton = $( trigger );
-			const batchName = currentButton.data( 'batchName' );
-			const batchNameClean = batchName.replace( new RegExp( '\\\\', 'g' ), '' );
+			ramseyBatch.batchName = currentButton.data( 'batchName' );
+			const batchNameClean = ramseyBatch.batchName.replace( new RegExp( '\\\\', 'g' ), '' );
 
 			progressMeter = $( `tr.progressMeter[data-batch-name="${batchNameClean}"]` );
 			progressBar = progressMeter.find( '.meter' );
@@ -110,14 +116,14 @@ jQuery( document ).ready( ( $ ) => {
 				method: 'POST',
 				data: {
 					action: 'ramsey-batch',
-					batchName
+					batchName: ramseyBatch.batchName
 				},
 				success( response ) {
 					if ( ! response.success ) {
 						return reject( new Error( response.data.reason ) );
 					}
 
-					console.log( 'Starting batch!', response.data.items );
+					console.log( 'Starting batch!', batchNameClean, response.data.items );
 
 					updateItems( response.data.items );
 

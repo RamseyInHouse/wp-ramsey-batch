@@ -63,8 +63,6 @@ if( is_admin() && class_exists('RamseySolutions\RamseyBatch\Controllers\BatchCon
 ### Create a batch job class and register the job
 Begin by creating a class for your batch job with a basic `__construct` method. Your class _must_ extend the `\RamseySolutions\RamseyBatch\BatchJob` class.
 
-The filter `ramsey-batch-jobs` allows you to hook a class method to register your batch job into the UI.
-
 ```php
 <?php
 namespace MyAppNamespace\Batch;
@@ -83,35 +81,34 @@ class MyBatchJob extends \RamseySolutions\RamseyBatch\BatchJob {
 	public function __construct() {
 		parent::__construct();
 
-		add_filter('ramsey-batch-jobs', [$this, 'registerBatchJob']);
-	}
-
-	/**
-	 * Register the batch job
-	 * @param  array  $jobs Array of batch job information
-	 * @return array
-	 */
-	public function registerBatchJob(array $jobs) {
-		$jobs[__CLASS__] = [
-			'name' => 'My Batch Job Name',
-			'description' => 'Description of what the batch job does.',
-			'lastRunDate' => $this->getLastRunDate()
-		];
-
-		return $jobs;
+		//Add any logic specific to the class after calling the parent constructor
 	}
 }
 ```
 
-There are a few methods that your class must provide. The general flow of plugin is:
+The general flow of plugin is:
+1. The user clicks the "Run Job" button in the UI.
+1. The `run()` method of your class is called. This should update the last run date and compile your list of items to be batch processed one-by-one. It should output a JSON array of items if successful.
+1. Once all of the batch items have been collected, the `runItem()` method of your class is called for each item in the batch. Each item from the JSON array is passed to the method individually for processing. If the item is processed successfully, it should [output a successful response](https://codex.wordpress.org/Function_Reference/wp_send_json_success) via JSON.
 
-1. **run()** method is called - This should update the last run date and compile your list of items to be batch processed one-by-one. It should output a JSON array of items if successful.
-1. **runItem()** method is called for each item in your collection. Each item from the JSON array is passed to the method individually for processing. If the item is processed successfully, it should [output a successful response](https://codex.wordpress.org/Function_Reference/wp_send_json_success) via JSON.
-
-
-The required methods are stubbed out below:
+Because `\RamseySolutions\RamseyBatch\BatchJob` is an abstract class, there are a few methods that your extending class must define. These required methods are stubbed out below:
 
 ```php
+/**
+ * Register the batch job
+ * @param  array  $jobs Array of batch job information
+ * @return array
+ */
+public function registerBatchJob(array $jobs) {
+	$jobs[__CLASS__] = [
+		'name' => 'My Batch Job Name',
+		'description' => 'Description of what the batch job does.',
+		'lastRunDate' => $this->getLastRunDate()
+	];
+
+	return $jobs;
+}
+
 /**
  * Set the batch job items
  * @param array $items Array of values to process over. These values will be passed into your processing function one-by-one via AJAX. Use the 'run' method to compile
@@ -155,6 +152,8 @@ public function runItem() {
 	$postId = $_REQUEST['item'];
 
 	//Setup an empty array to hold our response. As batch jobs should only be run in the WP admin by authenticated users, you can use this response to output information in the browser console.
+	//You can pass any number of elements in the response array, however, the response array expects at least a 'reason' key to provide some browser output.
+	//You can add a 'type' key with a value of 'warn' to output the message in the browser using console.warn() rather than console.log()
 	$response = [];
 
 	//We're only expecting post ID's, so let's do a quick sanity check. If this fails in real life, you should probably log it out for further analysis.
@@ -204,8 +203,6 @@ class MyBatchJob extends \RamseySolutions\RamseyBatch\BatchJob {
 	 */
 	public function __construct() {
 		parent::__construct();
-
-		add_filter('ramsey-batch-jobs', [$this, 'registerBatchJob']);
 	}
 
 	/**

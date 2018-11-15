@@ -38,9 +38,6 @@ abstract class BatchJob {
     public function __construct() {
         $this->items = [];
         $this->lastRunTimes = get_option(RB_PLUGIN_SLUG . '_batch-run-timestamps', []);
-
-        add_action('wp_ajax_' . RB_PLUGIN_SLUG, [$this, 'run'] );
-        add_action('wp_ajax_' . RB_PLUGIN_SLUG . '-item', [$this, 'runItem']);
     }
 
     /**

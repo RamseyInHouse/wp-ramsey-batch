@@ -19,6 +19,31 @@ class BatchController {
         $this->jobs = apply_filters(RB_PLUGIN_SLUG . '-jobs', [], $this);
     }
 
+    public static function runJob() {
+        if( !wp_doing_ajax() || $_REQUEST['action'] != RB_PLUGIN_SLUG ) return;
+
+        $currentBatchName = stripslashes($_REQUEST['batchName']);
+        $batchObj = $GLOBALS[RB_PLUGIN_SLUG][$currentBatchName];
+        
+        if( !$batchObj ) {
+            wp_send_json_error(['reason' => "Attempted to run job but global object not found - {$currentBatchName}."]);
+        }
+
+        $batchObj->run();
+    }
+
+    public static function runJobItem() {
+        if( !wp_doing_ajax() || $_REQUEST['action'] != 'ramsey-batch-item' ) return;
+
+        $currentBatchName = stripslashes($_REQUEST['batchName']);
+        $batchObj = $GLOBALS[RB_PLUGIN_SLUG][$currentBatchName];
+        if( !$batchObj ) {
+            wp_send_json_error(['reason' => "Attempted to run job item but global object not found - {$currentBatchName}."]);
+        }
+
+        $batchObj->runItem();
+    }
+
     /**
      * Enqueue JS scripts
      * @return void
@@ -34,7 +59,11 @@ class BatchController {
 
     public static function register(string $name) {
         if( !class_exists($name) ) return;
-        new $name;
+
+        $obj = new $name;
+        add_filter('ramsey-batch-jobs', [$obj, 'registerBatchJob']);
+
+        $GLOBALS[RB_PLUGIN_SLUG][$name] = $obj;
     }
 
     public function getJobs() {

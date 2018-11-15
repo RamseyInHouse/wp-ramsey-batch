@@ -3,7 +3,7 @@
 Plugin Name:  Ramsey Batch
 Plugin URI:   https://www.daveramsey.com
 Description:  Provides a framework and UI for running batch jobs inside of WordPress.
-Version:      1.0.1
+Version:      1.1.0
 Author:       Philip Downer <philip.downer@daveramsey.com>
 Author URI:   https://philipdowner.com
 License:      GPLv3
@@ -35,6 +35,11 @@ function ramseyBatchDisplayAdminPage() {
 	$page = new BatchView(new BatchController, RB_PLUGIN_SLUG, 'Batch Jobs');
 	$page->display();
 }
+
+add_action('admin_init', function() {
+	add_action('wp_ajax_' . RB_PLUGIN_SLUG, 'RamseySolutions\RamseyBatch\Controllers\BatchController::runJob' );
+	add_action('wp_ajax_' . RB_PLUGIN_SLUG . '-item', 'RamseySolutions\RamseyBatch\Controllers\BatchController::runJobItem');
+});
 
 add_action('admin_enqueue_scripts', function() {
 	BatchController::enqueueScripts();
