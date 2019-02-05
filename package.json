@@ -1,0 +1,23 @@
+{
+  "name": "wp-ramsey-batch",
+  "version": "1.2.0",
+  "description": "Provides a framework to handle large data processing jobs by breaking it into smaller chunks and running each job individually via AJAX requests. ",
+  "main": "wp-ramsey-batch.php",
+  "repository": "https://github.com/RamseyInHouse/wp-ramsey-batch",
+  "author": "Philip Downer <philip.downer@daveramsey.com>, Alex MacArthur <alex.macarthur@daveramsey.com>",
+  "license": "GPL 3.0",
+  "scripts": {
+    "prettify-and-add": "prettier \"./**/*.js\" --write && git add -A",
+    "build": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=webpack.config.js && prettier js/src/*.js --write",
+    "watch": "NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=webpack.config.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "prettier": "^1.16.4",
+    "webpack": "^4.29.1",
+    "webpack-cli": "^3.2.3"
+  }
+}
