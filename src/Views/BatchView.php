@@ -1,12 +1,14 @@
 <?php
 namespace RamseySolutions\RamseyBatch\Views;
 
-class BatchView extends AdminPage {
-
-	public function __construct(object $controller, string $slug, string $title) {
+class BatchView extends AdminPage
+{
+    public function __construct(object $controller, string $slug, string $title)
+    {
         parent::__construct($controller, $slug, $title);
 
-        $this->tableColumns = apply_filters(RB_PLUGIN_SLUG . '-table-columns',
+        $this->tableColumns = apply_filters(
+            RB_PLUGIN_SLUG . '-table-columns',
             [
                 [
                     'id' => 'name',
@@ -25,19 +27,18 @@ class BatchView extends AdminPage {
                 ]
             ]
         );
-	}
+    }
 
-	public function display() {
-        echo $this->open();
-
-		?>
+    public function display()
+    {
+        echo $this->open(); ?>
 		<div class="notice notice-warning">
 		    <p>The batch jobs here are powerful <strong>and must be run with caution</strong>. It's likely that they will irreversibly change your data. Carefully read and understand each job's description before proceeding.</p>
 		</div>
 
 		<table class="wp-list-table widefat fixed striped">
             <thead>
-                <?php foreach($this->tableColumns as $column): ?>
+                <?php foreach ($this->tableColumns as $column): ?>
                     <th id="<?php echo $column['id']; ?>" class="manage-column">
                         <?php echo $column['name']; ?>
                     </th>
@@ -51,26 +52,27 @@ class BatchView extends AdminPage {
             </tbody>
         </table>
 		<?php echo $this->close();
-	}
+    }
 
-	/**
+    /**
      * List batch jobs
      * @return string
      */
-    protected function listBatchJobs() {
+    protected function listBatchJobs()
+    {
         $jobs = $this->controller->getJobs();
 
         ob_start();
 
-        if( empty($jobs) ) {
+        if (empty($jobs)) {
             echo '<tr><td colspan="4">There are no registered batch jobs.</td></tr>';
             return ob_get_clean();
         }
 
-        foreach( $jobs as $key => $job ): ?>
+        foreach ($jobs as $key => $job): ?>
 
             <tr>
-                <?php foreach($this->tableColumns as $column): ?>
+                <?php foreach ($this->tableColumns as $column): ?>
                     <td>
                         <?php echo $job[$column['contentKey']]; ?>
                     </td>
@@ -92,5 +94,4 @@ class BatchView extends AdminPage {
         <?php endforeach;
         return ob_get_clean();
     }
-
 }

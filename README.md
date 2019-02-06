@@ -215,7 +215,7 @@ add_filter('ramsey-batch-table-columns', function ($columns) {
     $columns[] = [
         'id' => 'columnHeaderID',
         'name' => 'Custom Column Name',
-        'contentKey' => 'jobArrayKeyFromWhereToPullContent',
+        'contentKey' => 'myColumnNameOrSlug',
     ];
     return $columns;
 });
@@ -225,7 +225,7 @@ The content of that newly registered column can be accessed by adding a new key 
 
 ```php
 add_filter('ramsey-batch-jobs', function ($jobs, $instance) {
-    $jobs['MyAppNamespace\Batch\YourJob']['jobArrayKeyFromWhereToPullContent'] = '
+    $jobs['MyAppNamespace\Batch\YourJob']['myColumnNameOrSlug'] = '
         <input type="file" name="fileUpload">
     ';
 
