@@ -3,7 +3,7 @@
 	"description": "Perform batch jobs inside of WordPress.",
 	"type": "wordpress-plugin",
 	"license": "GPL v3",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"authors": [
 	    {
 	      "name": "Philip Downer",
