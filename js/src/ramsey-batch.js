@@ -165,18 +165,6 @@ jQuery(document).ready($ => {
   function startBatch(trigger) {
     return new Promise((resolve, reject) => {
       currentButton = $(trigger);
-      ramseyBatch.batchName = currentButton.data("batchName");
-      const batchNameClean = ramseyBatch.batchName.replace(
-        new RegExp("\\\\", "g"),
-        ""
-      );
-
-      progressMeter = $(
-        `tr.progressMeter[data-batch-name="${batchNameClean}"]`
-      );
-      progressBar = progressMeter.find(".meter");
-      statusMsg = progressMeter.find(".status");
-
       progressMeter.show();
       currentButton.prop("disabled", true);
 
@@ -196,7 +184,11 @@ jQuery(document).ready($ => {
             return reject(response.data.reason);
           }
 
-          console.log("Starting batch!", batchNameClean, response.data.items);
+          console.log(
+            "Starting batch!",
+            ramseyBatch.batchName,
+            response.data.items
+          );
 
           updateItems(response.data.items);
 
@@ -220,6 +212,20 @@ jQuery(document).ready($ => {
 
   // Handle the initial trigger
   $(buttons).on("click", e => {
+    ramseyBatch.batchName = $(e.target).data("batchName");
+    let cleanBatchName = ramseyBatch.batchName.replace(
+      new RegExp("\\\\", "g"),
+      ""
+    );
+
+    progressMeter = $(`tr.progressMeter[data-batch-name="${cleanBatchName}"]`);
+    progressBar = progressMeter.find(".meter");
+    progressBar.css({
+      width: `0%`
+    });
+    statusMsg = progressMeter.find(".status");
+    statusMsg.text("");
+
     startBatch(e.target).then(processBatchItems, response => {
       throw new Error(response);
     });
