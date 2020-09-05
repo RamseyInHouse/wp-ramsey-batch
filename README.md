@@ -64,7 +64,7 @@ class MyBatchJob extends \RamseySolutions\RamseyBatch\BatchJob
      * 
      * @var array
      */
-    protected $items = [];
+    public $items = [];
 
     /**
      * The constructor method must always call the parent constructor. 
